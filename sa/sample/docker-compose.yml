@@ -1,0 +1,26 @@
+version: '2'
+
+services:
+   
+   app:
+    
+    container_name: productlisttodo
+    restart: always
+    build: .
+    ports:
+
+      - '80:3000'
+    links: 
+     - db  
+  db:
+
+    image: mysql
+    command:  --default-authentication-plugin-mysql_native_password
+    restart: always
+    environment: 
+      MYSQL_ROOT_PASSWORD: francis17
+    ports:
+
+      - '3306:3306'  
+
+    
