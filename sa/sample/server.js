@@ -8,6 +8,8 @@ var SequelizeStore = require('connect-session-sequelize')(session.Store);
 var router=require("./router")(express);
 var passport=require("passport");
 var app=express();
+var server = require('http').createServer(app);
+var io = require('socket.io')();
 var middle=require("./middlewars/passport")(app);
 var expressValidator = require('express-validator');
 var config=require('./config');
@@ -27,6 +29,6 @@ var user=require('./models/index');
  
 app.use("/",router);
 user.sequelize.sync({force:false});
-app.listen(config.PORT,function() {
+server.listen(config.PORT,function() {
     console.log(`connected ${config.PORT}`);
 })

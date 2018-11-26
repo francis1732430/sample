@@ -8,7 +8,7 @@ config.db='devdb1';
 
 config.user="root";
 
-config.pass="Francissalin17.picco@gmail.com";
+config.pass="francis17";
 
 config.host='127.0.0.1';
 
