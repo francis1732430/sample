@@ -1,16 +1,17 @@
 
 const nodemailer = require('nodemailer');
 var Mailgen = require('mailgen');     
+var config=require('../config');
 
 module.exports.send=function(firstname,toEmail,enc){
 
     var transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
+        host: config.mailhost,
+        port: config.mailport,
         secure: true, 
         auth: {
-            user: 'francisiyngaran@gmail.com', 
-            pass: 'francis167.picco' 
+            user: config.mailuser, 
+            pass: config.mailpass 
         }
     });
     var generator = new Mailgen({
@@ -24,21 +25,21 @@ module.exports.send=function(firstname,toEmail,enc){
     });
     var jsonContent = {
         body: {
-            name: 'Francis',
+            name: `${firstname}`,
             intro: "You have received this email because a password reset request for your account was received.",
             action: {
                 instructions: "Click the button below to reset your password:",
                 button: {
                     color: "red",
                     text: "Reset your password",
-                    link: `http://127.0.0.1/resetPassword/${enc}`,
+                    link: `${config.resetLink}${enc}`,
                 },
             },
             outro: "If you did not request a password reset, no further action is required on your part.",
         },
     };
     var message = {
-        from:'francisiyngaran@gmail.com',
+        from:config.mailuser,
         to: toEmail,
         subject: 'Password Reset',
         html: generator.generate(jsonContent),

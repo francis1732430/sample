@@ -4,10 +4,11 @@ module.exports=function(sequelize,Sequelize) {
     const Feed = sequelize.define('Feed', {
         id:{type:Sequelize.INTEGER,primaryKey:true,autoIncrement:true},
         title:{type:Sequelize.STRING,allowNull:false},
-        content:{type:Sequelize.STRING,allowNull:false},
+        content:{type:Sequelize.TEXT,allowNull:false},
         user_id:{type:Sequelize.INTEGER,allowNull:false},
-        likes_count:{type:Sequelize.STRING,allowNull:false},
+        likes_count:{type:Sequelize.STRING,allowNull:true},
         is_active:{type:Sequelize.INTEGER,allowNull:false,defaultValue:1},
+        is_deleted:{type:Sequelize.INTEGER,allowNull:false,defaultValue:0},
         created_date: {
             type: 'TIMESTAMP',
             defaultValue: sequelize.literal('NOW()'),

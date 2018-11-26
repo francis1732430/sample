@@ -43,7 +43,7 @@ passport.authenticate("local",function(err,user){
     }
 
     if(!user) {
-        res.status(200).send({message:"user creation failed"});
+        res.send({message:"Login failed"});
     } else {
         req.logIn(user,function(err){
         if(err) return res.status(401).send(err);
@@ -53,7 +53,7 @@ passport.authenticate("local",function(err,user){
             userId:userId,
             exp: config.exp, 
         }, config.SECRET);
-        res.status(200).send({userId:userId,token:token});
+        res.status(200).send({status:1,userId:userId,token:token});
     }
 
 })(req,res);
@@ -62,23 +62,24 @@ passport.authenticate("local",function(err,user){
 
 module.exports.forgetPassword=function(req,res,next) {
 
-    var userId=req.params.id;
+    //var userId=req.params.id;
 
     var email=req.body.email;
 
     async.waterfall([function(done) {
 
-        db.User.findOne({where:{id:userId}}).then((user) => {
+        db.User.findOne({where:{email:email}}).then((user) => {
 
             if(user){
                 return done(null,user);
             }else {
-                return res.status(401).send({mesage:'User not found'});
+                return res.send({mesage:'User not found'});
             }
         })
     },function(user,done){
         var userId=user.get('id');
         var name=user.get('firstname');
+        var emailObj=config.mailuser;
         let current = Date.now();
         var resetToken=jwt.sign({
             userId: userId,
@@ -86,7 +87,7 @@ module.exports.forgetPassword=function(req,res,next) {
         }, config.SECRET);
         console.log(resetToken);
     mailer.send(name,emailObj,resetToken);
-    return res.status(200).send({messge:"mail Successfully sent"});
+    return res.status(200).send({messasge:"mail Successfully sent"});
     }])
     
 }
@@ -97,7 +98,8 @@ module.exports.resetPassword=function(req,res) {
     var decode=jwt.decode(token, config.SECRET);
     var password=req.body.password;
     let now = Date.now();
-    if (now < decode.exp) {
+    console.log('deccccccccccc',decode);
+    if (decode && now < decode.exp) {
         
         async.waterfall([function(done) {
 
@@ -105,14 +107,14 @@ module.exports.resetPassword=function(req,res) {
 
                 if(obj == null || obj == undefined) {
                         
-                    res.status(401).send({message:"User Not found"});
+                    res.send({message:"User Not found"});
                 } else {
                     console.log(obj);
                     obj.updateAttributes({password:password}).then((obj1) => {
                         if(obj1 != null && obj1 !== undefined) {
                             res.status(200).send({message:'password updated successfully'});
                         }else {
-                            res.status(401).send({message:"Password updation Failed"});
+                            res.send({message:"Password updation Failed"});
                         }
                     })
                 }
@@ -122,6 +124,6 @@ module.exports.resetPassword=function(req,res) {
 
 
     } else {
-        res.status(401).send({message:"Password Reset Failed"});
+        res.send({message:"Password Reset Failed"});
     }
 }

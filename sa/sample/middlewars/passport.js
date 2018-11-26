@@ -33,13 +33,11 @@ passport.use("local",new LocalStrategy({usernameField:'email',passwordField:'pas
     console.log("usernameeeeeeee",username,password);
 db.User.findOne({where:{email:username}}).then(user => {
    
-    var email=user.get('email');
-    var password_hash=user.get('password');
-    
     if(!user){
       done(null,false);
     } else {
-
+        var email=user.get('email');
+        var password_hash=user.get('password');
        var pass=check.checkPassword(password,password_hash);
        console.log("pass",pass);
        if(pass){

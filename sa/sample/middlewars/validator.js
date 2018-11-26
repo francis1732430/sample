@@ -43,3 +43,24 @@ module.exports.signin=function(req,res,next) {
         return next();
     }
 }
+
+module.exports.newsFeed=function(req,res,next) {
+    req.checkBody('title', 'Title is not empty').notEmpty();
+    req.checkBody('content', 'content is not empty').notEmpty();
+    req.checkBody('userId', 'userId is not empty').notEmpty();
+
+    var errors = req.validationErrors();
+    if (errors) {
+        var errorList = _.reduce(errors, function(result, error) {
+            result.push({ field: error.param, message: error.msg });
+            return result;
+        }, []);
+        return res.status(422).send({
+            status:0,
+            error:errorList
+        });
+    } else {
+        // normal processing here
+        return next();
+    }
+}
